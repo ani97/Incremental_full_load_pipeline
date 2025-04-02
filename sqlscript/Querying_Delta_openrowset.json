@@ -1,0 +1,17 @@
+{
+	"name": "Querying_Delta_openrowset",
+	"properties": {
+		"content": {
+			"query": "--Read delta files\nSelect * from \nOPENROWSET(\n    BULK 'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_delta/',\n    FORMAT='DELTA'\n)as result\n\n--In the output, at the end there are two new columns year and month. Ih has taken the paritions and turned into year and month\n--Unlike csv and parquet, here we cant choose subfolder or specific file within folder.\n--However, here we can limit data using where clause on partition\n\nSelect * from \nOPENROWSET(\n    BULK 'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_delta/',\n    FORMAT='DELTA'\n)as result\nwhere year='2020' and month='05'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

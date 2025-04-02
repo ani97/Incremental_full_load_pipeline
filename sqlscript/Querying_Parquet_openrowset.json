@@ -1,0 +1,17 @@
+{
+	"name": "Querying_Parquet_openrowset",
+	"properties": {
+		"content": {
+			"query": "--Read single parquet file directly\nSelect \n* \nFROM\nOPENROWSET(\n    BULK 'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_parquet/year=2020/month=01/part-00000-tid-6133789922049958496-2e489315-890a-4453-ae93-a104be9a6f06-106-1-c000.snappy.parquet',\n    FORMAT='Parquet'\n) as result\n\n--Check dataype and size allocated by synapse\nexec sp_describe_first_result_set N'\nSelect \n* \nFROM\nOPENROWSET(\n    BULK ''https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_parquet/year=2020/month=01/part-00000-tid-6133789922049958496-2e489315-890a-4453-ae93-a104be9a6f06-106-1-c000.snappy.parquet'',\n    FORMAT=''Parquet''\n) as result'\n\n--Lets explicitly datatype\nSELECT\n*\nFROM OPENROWSET(\n    BULK 'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_parquet/year=2020/month=01/part-00000-tid-6133789922049958496-2e489315-890a-4453-ae93-a104be9a6f06-106-1-c000.snappy.parquet',\n    FORMAT='PARQUET'\n) \nWITH(\n    VendorID SMALLINT,\n    lpep_pickup DATETIME,\n    lpep_dropoff_datetime DATETIME,\n    store_and_fwd_flag VARCHAR(10),\n    RatecodeID SMALLINT,\n    PULocationID INT,\n    DOLocationID INT,\n    passenger_count SMALLINT,\n    trip_distance FLOAT,\n    fare_amount FLOAT,\n    extra FLOAT,\n    mta_tax FLOAT,\n    tip_amount FLOAT,\n    tolls_amount FLOAT,\n    ehail_fee INT,\n    improvement_surcharge FLOAT,\n    total_amount FLOAT,\n    payment_type INT,\n    trip_type INT,\n    congestion_surcharge FLOAT\n) AS result\n\n--Read files from month folders within year \nSELECT\n*\nFROM OPENROWSET(\n    BULK 'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_parquet/year=*/month=*/*.parquet',\n    FORMAT='PARQUET'\n) as result\n\n\n--Read specific folders from year =2020\n\nSELECT\n*\nFROM OPENROWSET(\n    BULK ('https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_parquet/year=2020/month=02/*.parquet',\n    'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/trip_data_green_parquet/year=2020/month=12/*.parquet'),\n    FORMAT='PARQUET'\n) as result\n\n\n\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

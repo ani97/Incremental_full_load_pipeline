@@ -1,0 +1,17 @@
+{
+	"name": "External_tables_delta",
+	"properties": {
+		"content": {
+			"query": "--Create external data source\n\nCREATE EXTERNAL DATA SOURCE tripdatadelta\nWITH (\n    LOCATION = 'https://myncplstorageaccnt.dfs.core.windows.net/raw/raw/',\n);\n\n-- Create an external file format for delta table files\nCREATE EXTERNAL FILE FORMAT deltatripdata\nWITH (\n         FORMAT_TYPE = DELTA\n      );\n\n--Create External Table\nCREATE EXTERNAL TABLE mytripdatadelta\n(    VendorID SMALLINT,\n    lpep_pickup_datetime DATETIME2(0),\n    lpep_dropoff_datetime DATETIME2(0),\n    store_and_fwd_flag VARCHAR(10),\n    RatecodeID SMALLINT,\n    PULocationID INT,\n    DOLocationID INT,\n    passenger_count SMALLINT,\n    trip_distance FLOAT,\n    fare_amount FLOAT,\n    extra FLOAT,\n    mta_tax FLOAT,\n    tip_amount FLOAT,\n    tolls_amount FLOAT,\n    ehail_fee INT,\n    improvement_surcharge FLOAT,\n    total_amount FLOAT,\n    payment_type INT,\n    trip_type INT,\n    congestion_surcharge FLOAT\n)  \nWITH (\n    LOCATION = '/trip_data_green_delta',\n    DATA_SOURCE = tripdatadelta,  \n    FILE_FORMAT = deltatripdata \n)\nGO\n\nSelect * from mytripdatadelta\nwhere passenger_count<2",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "testing",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
